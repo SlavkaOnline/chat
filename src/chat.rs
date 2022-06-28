@@ -1,11 +1,11 @@
-mod chat {
+pub mod chat {
 
     use std::cell::{RefCell};
     use std::collections::{HashMap};
     use std::rc::Rc;
     use crate::chat_room::chat_room::{ChatRoom, ChatRoomId};
 
-    struct Chat {
+    pub struct Chat {
         rooms: RefCell<HashMap<ChatRoomId, Rc<ChatRoom>>>
     }
 

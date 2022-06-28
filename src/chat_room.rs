@@ -60,7 +60,7 @@ pub mod chat_room {
 
         #[test]
         fn message_add() {
-            let room = new(ChatRoomId { value: Uuid::new_v4() });
+            let room = ChatRoom::new(ChatRoomId { value: Uuid::new_v4() });
 
             let user = User { id: UserId { value: Uuid::new_v4() }, name: String::from("user") };
             let message = Message {
