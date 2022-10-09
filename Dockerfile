@@ -18,6 +18,10 @@ RUN rm ./target/release/deps/chat*
 
 RUN cargo build --release
 
+FROM builder as test
+WORKDIR /app/chat/src
+ENTRYPOINT ["cargo", "test", "--release"]
+
 FROM debian:buster-slim
 COPY --from=builder /app/chat/target/release/chat ./app/chat
 
