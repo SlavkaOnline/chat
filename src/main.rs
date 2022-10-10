@@ -11,11 +11,14 @@ use env_logger::Builder;
 use log::LevelFilter;
 use std::io::Write;
 use chrono::Local;
+use migration::{Migrator};
 
 #[tokio::main]
 async fn main() {
 
-    let SETTINGS: Settings = Settings::new().expect("config can be loaded");
+    let settings = Settings::new().expect("Ошибка при загрузке конфига");
+    
+    Migrator::set_up_db("postgres", "postgres", "localhost", "chat", false).await.expect("Ошибка подключения к базе данных");
 
     Builder::new()
         .format(|buf, record| {
@@ -35,7 +38,7 @@ async fn main() {
     let server = serve(websocket_filter(chat_connector));
 
     let server_task = server
-        .run(([0,0,0,0], SETTINGS.server.port));
+        .run(([0,0,0,0], settings.server.port));
 
     select! {
         _ = chat_task => {
