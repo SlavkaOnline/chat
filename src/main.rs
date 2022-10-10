@@ -1,10 +1,12 @@
 pub mod api;
 pub mod domain;
+pub mod settings;
 
 use warp::{serve};
 use tokio::select;
 use crate::api::websocket::{websocket_filter};
 use crate::domain::chat::{Chat};
+use crate::settings::{Settings};
 use env_logger::Builder;
 use log::LevelFilter;
 use std::io::Write;
@@ -12,6 +14,8 @@ use chrono::Local;
 
 #[tokio::main]
 async fn main() {
+
+    let SETTINGS: Settings = Settings::new().expect("config can be loaded");
 
     Builder::new()
         .format(|buf, record| {
@@ -31,7 +35,7 @@ async fn main() {
     let server = serve(websocket_filter(chat_connector));
 
     let server_task = server
-        .run(([0,0,0,0], 80));
+        .run(([0,0,0,0], SETTINGS.server.port));
 
     select! {
         _ = chat_task => {
