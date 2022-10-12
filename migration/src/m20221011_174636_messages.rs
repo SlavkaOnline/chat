@@ -1,6 +1,5 @@
-use sea_orm_migration::prelude::*;
-
 use super::m20220101_000001_rooms::Rooms;
+use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -16,13 +15,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Messages::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Messages::User).json_binary().not_null())
                     .col(ColumnDef::new(Messages::To).json_binary().null())
+                    .col(ColumnDef::new(Messages::Text).text().not_null())
                     .col(
-                        ColumnDef::new(Messages::Tags)
-                            .array("text".to_owned())
+                        ColumnDef::new(Messages::DateTime)
+                            .timestamp_with_time_zone()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(Messages::Text).text().null())
-                    .col(ColumnDef::new(Messages::DateTime).date_time().null())
                     .col(ColumnDef::new(Messages::RoomId).uuid().not_null())
                     .foreign_key(
                         ForeignKey::create()
@@ -49,7 +47,6 @@ pub enum Messages {
     Id,
     User,
     To,
-    Tags,
     Text,
     DateTime,
     RoomId,

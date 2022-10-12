@@ -1,5 +1,8 @@
-pub mod api;
-pub mod domain;
+mod api;
+mod app;
+mod commands;
+mod domain;
+mod entities;
 
 use crate::api::websocket::websocket_filter;
 use crate::domain::chat::Chat;
@@ -16,15 +19,15 @@ use warp::serve;
 async fn main() {
     let settings = Settings::new().expect("Ошибка при загрузке конфига");
 
-    // Migrator::set_up_db(
-    //     &settings.database.host,
-    //     &settings.database.login,
-    //     &settings.database.password,
-    //     &settings.database.name,
-    //     false,
-    // )
-    // .await
-    // .expect("Ошибка подключения к базе данных");
+    let db = Migrator::set_up_db(
+        &settings.database.host,
+        &settings.database.login,
+        &settings.database.password,
+        &settings.database.name,
+        false,
+    )
+    .await
+    .expect("Ошибка подключения к базе данных");
 
     Builder::new()
         .format(|buf, record| {
@@ -39,7 +42,7 @@ async fn main() {
         .filter(None, LevelFilter::Info)
         .init();
 
-    let chat = Chat::new();
+    let chat = Chat::new(db.clone());
 
     let (chat_task, chat_connector) = chat.start();
     let server = serve(websocket_filter(chat_connector));

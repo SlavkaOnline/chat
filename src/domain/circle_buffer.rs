@@ -4,31 +4,43 @@ pub struct CircleBuffer<T> {
     position: usize,
     len: usize,
     capacity: usize,
-    buffer: Vec<T>
+    buffer: Vec<T>,
 }
 
-impl<T> CircleBuffer<T>{
+impl<T> CircleBuffer<T>
+where
+    T: Clone,
+{
     pub fn with_capacity(capacity: usize) -> CircleBuffer<T> {
-        CircleBuffer {position: 0, len: 0, capacity: capacity, buffer: Vec::with_capacity(capacity)}
+        CircleBuffer {
+            position: 0,
+            len: 0,
+            capacity: capacity,
+            buffer: Vec::with_capacity(capacity),
+        }
+    }
+
+    pub fn from(vec: Vec<T>) -> CircleBuffer<T> {
+        CircleBuffer {
+            position: 0,
+            len: vec.len(),
+            capacity: vec.len(),
+            buffer: vec,
+        }
     }
 
     pub fn push(&mut self, item: T) {
-        
         if self.len < self.capacity {
-
             self.buffer.push(item);
             self.len = min(self.capacity, self.len + 1);
             self.position += 1;
-        
         } else {
-
-            if self.position == self.capacity  {
+            if self.position == self.capacity {
                 self.position = 0;
-            } 
-                
+            }
+
             self.buffer[self.position] = item;
             self.position += 1;
-        
         }
     }
 
@@ -38,7 +50,7 @@ impl<T> CircleBuffer<T>{
             index: self.position,
             end: self.len,
             buffer: &self.buffer,
-            circled: false
+            circled: false,
         }
     }
 }
@@ -48,15 +60,13 @@ pub struct CircleBufferIter<'a, T: 'a> {
     position: usize,
     buffer: &'a Vec<T>,
     end: usize,
-    circled: bool
+    circled: bool,
 }
-
 
 impl<'a, T> Iterator for CircleBufferIter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
-
         if self.index == self.end && !self.circled {
             self.circled = true;
             self.index = 1;
@@ -73,7 +83,10 @@ impl<'a, T> Iterator for CircleBufferIter<'a, T> {
     }
 }
 
-impl<'a, T: 'a> IntoIterator for &'a CircleBuffer<T> {
+impl<'a, T: 'a> IntoIterator for &'a CircleBuffer<T>
+where
+    T: Clone,
+{
     type Item = &'a T;
     type IntoIter = CircleBufferIter<'a, T>;
     fn into_iter(self) -> Self::IntoIter {
@@ -93,7 +106,7 @@ mod tests {
             buffer.push(i)
         }
 
-        let expected = vec![0,1,2,3,4];
+        let expected = vec![0, 1, 2, 3, 4];
         assert_eq!(buffer.buffer, expected)
     }
 
@@ -105,7 +118,7 @@ mod tests {
             buffer.push(i)
         }
 
-        let expected = vec![0,1,2,3,4];
+        let expected = vec![0, 1, 2, 3, 4];
         assert_eq!(buffer.buffer, expected)
     }
 
@@ -117,7 +130,7 @@ mod tests {
             buffer.push(i)
         }
 
-        let expected = vec![5,6,2,3,4];
+        let expected = vec![5, 6, 2, 3, 4];
         assert_eq!(buffer.buffer, expected)
     }
 
@@ -135,10 +148,9 @@ mod tests {
             arr.push(item.to_owned());
         }
 
-        let expected = vec![0,1,2,3,4];
+        let expected = vec![0, 1, 2, 3, 4];
         assert_eq!(arr, expected)
     }
-
 
     #[test]
     fn iter_full_push() {
@@ -154,7 +166,7 @@ mod tests {
             arr.push(item.to_owned());
         }
 
-        let expected = vec![0,1,2,3,4];
+        let expected = vec![0, 1, 2, 3, 4];
         assert_eq!(arr, expected)
     }
 
@@ -171,7 +183,7 @@ mod tests {
             arr.push(item.to_owned());
         }
 
-        let expected = vec![2,3,4,5,6];
+        let expected = vec![2, 3, 4, 5, 6];
         assert_eq!(arr, expected)
     }
 }

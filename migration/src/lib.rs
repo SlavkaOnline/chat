@@ -4,7 +4,7 @@ use sea_orm_migration::sea_orm::{
 };
 
 mod m20220101_000001_rooms;
-mod m20221011_174636_mesages;
+mod m20221011_174636_messages;
 
 pub struct Migrator;
 
@@ -13,7 +13,7 @@ impl MigratorTrait for Migrator {
     fn migrations() -> Vec<Box<dyn MigrationTrait>> {
         vec![
             Box::new(m20220101_000001_rooms::Migration),
-            Box::new(m20221011_174636_mesages::Migration),
+            Box::new(m20221011_174636_messages::Migration),
         ]
     }
 }

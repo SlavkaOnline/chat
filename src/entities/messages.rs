@@ -9,11 +9,9 @@ pub struct Model {
     pub id: Uuid,
     pub user: Json,
     pub to: Option<Json>,
-    #[sea_orm(column_type = "Custom(\"array\".to_owned())")]
-    pub tags: String,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub text: Option<String>,
-    pub date_time: Option<DateTime>,
+    #[sea_orm(column_type = "Text")]
+    pub text: String,
+    pub date_time: DateTimeWithTimeZone,
     pub room_id: Uuid,
 }
 
