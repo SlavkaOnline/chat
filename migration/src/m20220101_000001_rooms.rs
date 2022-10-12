@@ -6,18 +6,12 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-
         manager
             .create_table(
                 Table::create()
                     .table(Rooms::Table)
                     .if_not_exists()
-                    .col(
-                        ColumnDef::new(Rooms::Id)
-                            .uuid()
-                            .not_null()
-                            .primary_key(),
-                    )
+                    .col(ColumnDef::new(Rooms::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Rooms::Name).string().not_null())
                     .to_owned(),
             )
@@ -31,7 +25,7 @@ impl MigrationTrait for Migration {
     }
 }
 #[derive(Iden)]
-enum Rooms {
+pub enum Rooms {
     Table,
     Id,
     Name,

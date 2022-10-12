@@ -1,0 +1,11 @@
+{
+  "server": {
+    "port": 80
+  },
+  "database": {
+    "host": "localhost",
+    "login": "postgres",
+    "password": "postgres",
+    "name": "chat"
+  }
+}

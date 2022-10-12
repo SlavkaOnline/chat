@@ -325,7 +325,6 @@ name = "chat"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "config",
  "entity",
  "env_logger",
  "futures",
@@ -334,6 +333,7 @@ dependencies = [
  "sea-orm",
  "serde",
  "serde_json",
+ "settings",
  "tokio",
  "tracing-log",
  "uuid",
@@ -1157,6 +1157,7 @@ version = "0.1.0"
 dependencies = [
  "async-std",
  "sea-orm-migration",
+ "settings",
 ]
 
 [[package]]
@@ -1988,6 +1989,15 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "settings"
+version = "0.1.0"
+dependencies = [
+ "config",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
