@@ -1,9 +1,7 @@
-use std::{env, fmt};
+use std::fmt;
 
 use config::{Config, ConfigError, Environment, File};
 use serde::Deserialize;
-use std::ffi::OsStr;
-use std::path::Path;
 
 const CONFIG_FILE_PATH: &str = "./settings/src/Default.json";
 const CONFIG_FILE_PREFIX: &str = "./settings/src/";

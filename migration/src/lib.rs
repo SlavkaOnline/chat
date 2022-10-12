@@ -69,7 +69,7 @@ impl Migrator {
         }
 
         let url = format!("{}/{}", url, database.to_owned());
-        Database::connect(&url).await?;
+        let db = Database::connect(&url).await?;
 
         Ok(db)
     }

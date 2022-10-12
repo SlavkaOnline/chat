@@ -28,7 +28,8 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .name("fk-messages-rooms_id")
                             .from(Messages::Table, Messages::RoomId)
-                            .to(Rooms::Table, Rooms::Id),
+                            .to(Rooms::Table, Rooms::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
