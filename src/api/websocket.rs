@@ -43,19 +43,10 @@ async fn websocket_connect(id: Uuid, ws: ws::Ws, chat_ref: ChatRef) -> Result<im
 async fn connection_handle(id: Uuid, web_socket: WebSocket, chat_connector: ChatRef) {
     let connection_id = ConnectionId(Uuid::new_v4());
     let (mut websoket_in, mut websoket_out) = web_socket.split();
-
-    let (chat_room_channel, _) = broadcast::channel::<ChatMessage>(1);
     let (chat_room_in, mut chat_room_out) = mpsc::channel::<ChatMessage>(100);
 
-    let room_id = ChatRoomId(id);
-    chat_connector
-        .connect_to_room(
-            room_id,
-            connection_id,
-            chat_room_channel.clone(),
-            chat_room_in.clone(),
-        )
-        .await;
+    let room = chat_connector.get_room(ChatRoomId(id)).await;
+    room.connect(connection_id, chat_room_in).await;
 
     tokio::spawn(async move {
         while let Some(result) = websoket_out.next().await {
@@ -63,19 +54,13 @@ async fn connection_handle(id: Uuid, web_socket: WebSocket, chat_connector: Chat
                 Ok(message) => {
                     if let Ok(text) = message.to_str() {
                         if let Ok(msg) = serde_json::from_str::<WsMessage>(text) {
-                            if let Err(err) = chat_room_channel.send(ChatMessage {
+                            room.add_message(ChatMessage {
                                 id: MessageId(Uuid::new_v4()),
                                 date_time: Utc::now(),
                                 user: msg.user,
                                 to: msg.to,
                                 text: msg.text,
-                            }) {
-                                log::error!(
-                                    "Ошибка при отправке сообщения в комнату {}, {}",
-                                    id,
-                                    err.to_string()
-                                )
-                            }
+                            }).await;
                         } else {
                             log::error!("Ошибка при парсинге сообщения");
                         }
@@ -84,11 +69,7 @@ async fn connection_handle(id: Uuid, web_socket: WebSocket, chat_connector: Chat
                 Err(e) => eprintln!("Ошибка при чтении из вебсокета {:?}", e),
             }
         }
-        drop(chat_room_channel);
-        drop(chat_room_in);
-        chat_connector
-            .disconect_from_room(room_id, connection_id)
-            .await;
+        room.disconnect(connection_id).await;
     });
 
     tokio::spawn(async move {
