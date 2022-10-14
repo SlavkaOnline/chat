@@ -20,8 +20,8 @@ COPY migration/Cargo.toml ./migration/Cargo.toml
 RUN cargo build --release
 RUN rm src/*.rs
 
-COPY settings/src ./settings/src
-COPY migration/src ./migration/src
+COPY settings ./settings
+COPY migration ./migration
 COPY ./src ./src
 
 RUN rm ./target/release/deps/chat*
