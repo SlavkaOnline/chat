@@ -29,6 +29,15 @@ impl MigrationTrait for Migration {
                             .to(Rooms::Table, Rooms::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
+                    .index(
+                            Index::create()
+                            .name("IX_messages_room_id_date_time")
+                            .table(Messages::Table)
+                            .col(Messages::RoomId)
+                            .col(Messages::DateTime)
+                            .unique()
+                            .index_type(IndexType::BTree)
+                    )
                     .to_owned(),
             )
             .await
