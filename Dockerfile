@@ -16,7 +16,7 @@ RUN cargo new --lib migration
 COPY ./migration/Cargo.toml ./migration/Cargo.toml
 
 RUN cargo build --release
-RUN rm src/*.rs
+RUN rm -rf ./src
 
 RUN rm -rf ./settings
 RUN rm -rf ./migration
