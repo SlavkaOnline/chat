@@ -29,8 +29,8 @@ COPY ./src ./src
 RUN cargo build --release
 
 FROM builder as test
-WORKDIR /app/chat/src
-ENTRYPOINT ["cargo", "test", "--release"]
+WORKDIR /app/chat
+ENTRYPOINT ["cargo", "test"]
 
 FROM debian:buster-slim
 COPY --from=builder /app/chat/target/release/chat ./app/chat
