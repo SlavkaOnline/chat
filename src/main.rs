@@ -4,6 +4,7 @@ mod commands;
 mod domain;
 mod entities;
 
+use crate::api::messages::messages_filter;
 use crate::api::websocket::websocket_filter;
 use crate::domain::chat::Chat;
 use chrono::Local;
@@ -13,7 +14,7 @@ use migration::Migrator;
 use settings::Settings;
 use std::io::Write;
 use tokio::select;
-use warp::serve;
+use warp::{serve, Filter};
 
 #[tokio::main]
 async fn main() {
@@ -45,7 +46,7 @@ async fn main() {
     let chat = Chat::new(db.clone());
 
     let (chat_task, chat_connector) = chat.start();
-    let server = serve(websocket_filter(chat_connector));
+    let server = serve(messages_filter(db.clone()).or(websocket_filter(chat_connector)));
 
     let server_task = server.run(([0, 0, 0, 0], settings.server.port));
 

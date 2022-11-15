@@ -117,7 +117,7 @@ impl ChatRoom {
     ) -> ChatRoom {
         return ChatRoom {
             id,
-            messages: CircleBuffer::from(messages),
+            messages: CircleBuffer::from(&messages),
             connections: HashMap::with_capacity(10),
             chat,
             pendong_to_remove: false,
@@ -143,7 +143,7 @@ impl ChatRoom {
             .await;
 
             match result {
-                Ok(messages) => self.messages = CircleBuffer::from(messages),
+                Ok(messages) => self.messages = CircleBuffer::from(&messages),
                 Err(_) => self.chat.remove_room(self.id).await,
             }
 

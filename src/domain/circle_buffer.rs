@@ -20,11 +20,21 @@ where
         }
     }
 
-    pub fn from(vec: Vec<T>) -> CircleBuffer<T> {
+    pub fn from(source: &[T]) -> CircleBuffer<T> {
+        let vec = if source.len() < 10 {
+            let mut vv = Vec::<T>::with_capacity(10);
+            for m in source {
+                vv.push(m.to_owned())
+            }
+            vv
+        } else {
+            source.to_vec()
+        };
+
         CircleBuffer {
-            position: 0,
+            position: vec.len(),
             len: vec.len(),
-            capacity: vec.len(),
+            capacity: vec.capacity(),
             buffer: vec,
         }
     }
@@ -185,5 +195,36 @@ mod tests {
 
         let expected = vec![2, 3, 4, 5, 6];
         assert_eq!(arr, expected)
+    }
+
+    #[test]
+    fn from_empty_vector() {
+        let mut buffer = CircleBuffer::<i32>::from(&[]);
+        buffer.push(1);
+
+        let mut arr = Vec::<i32>::new();
+
+        for item in &buffer {
+            arr.push(item.to_owned());
+        }
+
+        let expected = vec![1];
+        assert_eq!(arr, expected);
+        assert_eq!(10, buffer.capacity);
+    }
+
+    #[test]
+    fn from_vector() {
+        let buffer = CircleBuffer::<i32>::from(&[1, 2, 3, 4, 5, 6]);
+
+        let mut arr = Vec::<i32>::new();
+
+        for item in &buffer {
+            arr.push(item.to_owned());
+        }
+
+        let expected = vec![1, 2, 3, 4, 5, 6];
+        assert_eq!(arr, expected);
+        assert_eq!(10, buffer.capacity);
     }
 }
